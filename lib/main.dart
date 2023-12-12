@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_utils/visitory/visitory_screen.dart';
+
+import 'routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,7 +8,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -17,12 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routes: {
-        '/': (context) => const MyHomePage(title: 'Home Page'),
-        '/visitory': (context) => const VisitoryScreen(
-              title: "Visitory Pattern",
-            ),
-      },
+      routes: routes,
       initialRoute: '/',
     );
   }
@@ -37,6 +32,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Widget> buildList() {
+    List<Widget> list = [];
+    for (var i in routes.keys) {
+      if (i == "/") continue;
+      list.add(ElevatedButton(
+          onPressed: () => Navigator.pushNamed(context, i),
+          child: Text("${i.replaceAll("/", "")} Pattern")));
+    }
+
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,17 +51,20 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You choose design pattern:',
-            ),
-            ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/visitory'),
-                child: const Text("Visitory Pattern")),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'You choose design pattern:',
+              ),
+              ...buildList(),
+            ],
+          ),
         ),
       ),
     );
