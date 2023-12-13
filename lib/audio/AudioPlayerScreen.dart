@@ -25,30 +25,12 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
     "http://192.168.1.75:8081/product/rest/chat/318.mp3",
     "http://192.168.1.75:8081/product/rest/chat/319.mp3",
   ];
-  List<Widget> buildList() {
-    log("buildList: ${currentUrl.value}");
-
-    List<Widget> list = [];
-    listUrl.forEach((element) {
-      list.add(PlayerItem(
-        audioURL: element,
-        time: DateTime.now(),
-        play: (url) {
-          currentUrl.value = url;
-          player.playUrl(url);
-        },
-        stop: () => player.stop(),
-        autoPlay: element == currentUrl.value,
-      ));
-    });
-    return list;
-  }
 
   @override
   void initState() {
     super.initState();
     player.statePlayer().listen((event) {
-      log("State: ${event.processingState}");
+      // log("State: ${event.processingState}");
       if (event.processingState == ProcessingState.completed) {
         // Khi âm thanh kết thúc, dừng và đặt lại vị trí 0
         player.stop();
@@ -60,7 +42,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log("REBUILD");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -74,7 +55,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
               itemBuilder: (BuildContext context, int index) {
                 String url = listUrl.elementAt(index);
                 bool play = url == currentUrl.value;
-                log("ListView: $url - $play");
                 return PlayerItem(
                   audioURL: url,
                   time: DateTime.now(),
