@@ -145,7 +145,7 @@ class _HiveScreenState extends State<HiveScreen> {
             },
           ))
         ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
