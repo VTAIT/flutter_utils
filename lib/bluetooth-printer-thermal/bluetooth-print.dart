@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
-import 'package:widgets_to_image/widgets_to_image.dart';
+import 'package:screenshot/screenshot.dart';
 
 import 'widget-printer.dart';
 
@@ -22,8 +22,8 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
   bool _connected = false;
   BluetoothDevice? _device;
   String tips = 'no device connect';
-  WidgetsToImageController controller = WidgetsToImageController();
   Uint8List? bytes;
+  ScreenshotController controller = ScreenshotController();
 
   Future<void> initBluetooth() async {
     bluetoothPrint.startScan(timeout: Duration(seconds: 4));
@@ -156,7 +156,7 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
                       ],
                     ),
                     Divider(),
-                    WidgetsToImage(
+                    Screenshot(
                       controller: controller,
                       child: buildTicketKitchen(),
                     ),
@@ -179,6 +179,41 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
                                   // height: 200,
                                   linefeed: 1));
                               await bluetoothPrint.printReceipt(config, list);
+                            }
+                          : null,
+                    ),
+                    OutlinedButton(
+                      child: Text('print receipt(esc) no render'),
+                      onPressed: _connected
+                          ? () async {
+                              controller
+                                  .captureFromWidget(Container(
+                                      padding: const EdgeInsets.all(30.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.blueAccent,
+                                            width: 5.0),
+                                        color: Colors.redAccent,
+                                      ),
+                                      child:
+                                          Text("This is an invisible widget")))
+                                  .then((capturedImage) async {
+                                Map<String, dynamic> config = Map();
+
+                                List<LineText> list = [];
+
+                                final data = await controller.capture();
+                                String base64String = base64Encode(data!);
+                                String base64Image = base64String;
+                                list.add(LineText(
+                                    type: LineText.TYPE_IMAGE,
+                                    content: base64Image,
+                                    align: LineText.ALIGN_CENTER,
+                                    width: 380,
+                                    // height: 200,
+                                    linefeed: 1));
+                                await bluetoothPrint.printReceipt(config, list);
+                              });
                             }
                           : null,
                     ),

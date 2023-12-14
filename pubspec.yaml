@@ -45,7 +45,7 @@ dependencies:
   web_socket_channel: ^2.4.0
   # Bluetooth print
   bluetooth_print: ^4.3.0
-  widgets_to_image: ^0.0.2
+  screenshot: ^2.1.0
   # bluetooth ble
   flutter_blue_plus: ^1.29.8
   flutter_secure_storage: ^9.0.0
