@@ -188,23 +188,29 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
                           ? () async {
                               controller
                                   .captureFromWidget(Container(
+                                      width: 100,
+                                      height: 100,
                                       padding: const EdgeInsets.all(30.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                             color: Colors.blueAccent,
                                             width: 5.0),
-                                        color: Colors.redAccent,
+                                        color: Colors.white,
                                       ),
-                                      child:
-                                          Text("This is an invisible widget")))
+                                      child: Text(
+                                        "This is an invisible widget",
+                                        style: TextStyle(color: Colors.black),
+                                      )))
                                   .then((capturedImage) async {
                                 Map<String, dynamic> config = Map();
 
                                 List<LineText> list = [];
 
-                                final data = await controller.capture();
-                                String base64String = base64Encode(data!);
+                                // final data = await controller.capture();
+                                String base64String =
+                                    base64Encode(capturedImage);
                                 String base64Image = base64String;
+
                                 list.add(LineText(
                                     type: LineText.TYPE_IMAGE,
                                     content: base64Image,
@@ -212,6 +218,7 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
                                     width: 380,
                                     // height: 200,
                                     linefeed: 1));
+
                                 await bluetoothPrint.printReceipt(config, list);
                               });
                             }
