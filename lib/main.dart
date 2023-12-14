@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: routes,
-      initialRoute: '/',
+      initialRoute: '/BlueTooth Thermal',
       debugShowCheckedModeBanner: false,
     );
   }
@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (i == "/") continue;
       list.add(ElevatedButton(
           onPressed: () => Navigator.pushNamed(context, i),
-          child: Text("${i.replaceAll("/", "")} Pattern")));
+          child: Text(i.replaceAll("/", ""))));
     }
 
     return list;

@@ -16,6 +16,7 @@ class AudioPlayerScreen extends StatefulWidget {
 class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
   MyAudioPlayer player = MyAudioPlayer();
   ValueNotifier<String> currentUrl = ValueNotifier<String>("");
+  int currentIndex = -1;
   List<String> listUrl = [
     "http://192.168.1.75:8081/product/rest/chat/310.mp3",
     "http://192.168.1.75:8081/product/rest/chat/312.mp3",
@@ -35,6 +36,14 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
         // Khi âm thanh kết thúc, dừng và đặt lại vị trí 0
         player.stop();
         player.seekTo(0);
+
+        if (currentIndex < listUrl.length) {
+          currentIndex++;
+          currentUrl.value = listUrl.elementAt(currentIndex - 1);
+          player.playUrl(currentUrl.value);
+          return;
+        }
+
         currentUrl.value = "";
       }
     });
@@ -58,12 +67,14 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                 return PlayerItem(
                   audioURL: url,
                   time: DateTime.now(),
-                  play: (url) {
+                  play: (url, index) {
                     currentUrl.value = url;
+                    currentIndex = index;
                     player.playUrl(url);
                   },
                   stop: () => player.stop(),
                   autoPlay: play,
+                  index: index,
                 );
               },
             );

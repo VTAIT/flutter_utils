@@ -10,7 +10,8 @@ class PlayerItem extends StatefulWidget {
   bool isRight;
   DateTime time;
   bool autoPlay;
-  Function(String) play;
+  int index;
+  Function(String, int) play;
   Function() stop;
   PlayerItem(
       {super.key,
@@ -21,7 +22,8 @@ class PlayerItem extends StatefulWidget {
       this.autoPlay = false,
       required this.time,
       required this.play,
-      required this.stop});
+      required this.stop,
+      required this.index});
 
   @override
   State<PlayerItem> createState() => _PlayerItemState();
@@ -132,7 +134,7 @@ class _PlayerItemState extends State<PlayerItem> {
                             onPressed: () {
                               widget.autoPlay = !widget.autoPlay;
                               widget.autoPlay
-                                  ? widget.play(widget.audioURL)
+                                  ? widget.play(widget.audioURL, widget.index)
                                   : widget.stop();
                               setState(() {});
                             },
