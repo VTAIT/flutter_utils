@@ -46,6 +46,13 @@ dependencies:
   # Bluetooth print
   bluetooth_print: ^4.3.0
   widgets_to_image: ^0.0.2
+  # bluetooth ble
+  flutter_blue_plus: ^1.29.8
+  flutter_secure_storage: ^9.0.0
+  file_picker: ^6.1.1
+  permission_handler: ^11.1.0
+  intl: ^0.18.1
+  confirm_dialog: ^1.0.2
   
   path_provider: ^2.1.1
 
