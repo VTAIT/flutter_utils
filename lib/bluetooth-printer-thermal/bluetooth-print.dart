@@ -24,6 +24,7 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
   String tips = 'no device connect';
   Uint8List? bytes;
   ScreenshotController controller = ScreenshotController();
+  GlobalKey key = GlobalKey();
 
   Future<void> initBluetooth() async {
     bluetoothPrint.startScan(timeout: Duration(seconds: 4));
@@ -182,19 +183,32 @@ class _BlueToothPrintState extends State<BlueToothPrint> {
                             }
                           : null,
                     ),
+                    Container(
+                        width: 320,
+                        height: 100,
+                        // padding: const EdgeInsets.all(30.0),
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.blueAccent, width: 2.0),
+                          color: Colors.white,
+                        ),
+                        child: Text(
+                          "This is an invisible widget",
+                          style: TextStyle(color: Colors.black),
+                        )),
                     OutlinedButton(
                       child: Text('print receipt(esc) no render'),
                       onPressed: _connected
                           ? () async {
                               controller
                                   .captureFromWidget(Container(
-                                      width: 100,
+                                      width: 320,
                                       height: 100,
-                                      padding: const EdgeInsets.all(30.0),
+                                      // padding: const EdgeInsets.all(30.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                             color: Colors.blueAccent,
-                                            width: 5.0),
+                                            width: 2.0),
                                         color: Colors.white,
                                       ),
                                       child: Text(
