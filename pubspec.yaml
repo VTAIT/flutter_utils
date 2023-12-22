@@ -44,7 +44,9 @@ dependencies:
   # Web Socket
   web_socket_channel: ^2.4.0
   # Bluetooth print
-  bluetooth_print: ^4.3.0
+  #bluetooth_print: ^4.3.0
+  esc_pos_bluetooth: ^0.4.1
+  esc_pos_utils: ^1.1.0
   screenshot: ^2.1.0
   # bluetooth ble
   flutter_blue_plus: ^1.29.8
@@ -55,6 +57,10 @@ dependencies:
   confirm_dialog: ^1.0.2
   
   path_provider: ^2.1.1
+
+  #print network
+  flutter_esc_pos_network: ^1.0.2
+  
 
 
 dev_dependencies:

@@ -134,9 +134,11 @@ Widget buildTicketKitchen(
   );
 
   // return Container(
-  //   width: 100,
-  //   height: 200,
-  //   color: Colors.white,
+  //   width: 380,
+  //   // height: 200,
+  //   // color: Colors.white,
+  //   decoration: BoxDecoration(
+  //       border: Border.all(color: Colors.black, width: 1), color: Colors.white),
   //   child: Text(
   //     "ABC",
   //     style: TextStyle(color: Colors.black, fontSize: 20),
