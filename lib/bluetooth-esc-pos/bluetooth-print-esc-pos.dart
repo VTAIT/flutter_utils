@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
+// import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_utils/bluetooth-printer-thermal/widget-printer.dart';
@@ -19,32 +20,32 @@ class BlueToothPrintESCPOS extends StatefulWidget {
 }
 
 class _BlueToothPrintESCPOSState extends State<BlueToothPrintESCPOS> {
-  PrinterBluetoothManager printerManager = PrinterBluetoothManager();
-  List<PrinterBluetooth> _devices = [];
-  ScreenshotController controller = ScreenshotController();
+  // PrinterBluetoothManager printerManager = PrinterBluetoothManager();
+  // List<PrinterBluetooth> _devices = [];
+  // ScreenshotController controller = ScreenshotController();
 
   @override
   void initState() {
     super.initState();
 
-    printerManager.scanResults.listen((devices) async {
-      // print('UI: Devices found ${devices.length}');
-      setState(() {
-        _devices = devices;
-      });
-    });
+    //   printerManager.scanResults.listen((devices) async {
+    //     // print('UI: Devices found ${devices.length}');
+    //     setState(() {
+    //       _devices = devices;
+    //     });
+    //   });
   }
 
-  void _startScanDevices() {
-    setState(() {
-      _devices = [];
-    });
-    printerManager.startScan(Duration(seconds: 4));
-  }
+  // void _startScanDevices() {
+  //   setState(() {
+  //     _devices = [];
+  //   });
+  //   printerManager.startScan(Duration(seconds: 4));
+  // }
 
-  void _stopScanDevices() {
-    printerManager.stopScan();
-  }
+  // void _stopScanDevices() {
+  //   printerManager.stopScan();
+  // }
 
   Future<List<int>> demoReceipt(
       PaperSize paper, CapabilityProfile profile) async {
@@ -197,114 +198,117 @@ class _BlueToothPrintESCPOSState extends State<BlueToothPrintESCPOS> {
     return bytes;
   }
 
-  Future<List<int>> testTicket(
-      PaperSize paper, CapabilityProfile profile, BuildContext key) async {
-    final Generator generator = Generator(paper, profile);
-    List<int> bytes = [];
-    final Uint8List buf = await controller
-        .captureFromWidget(buildTicketKitchen(), context: key, pixelRatio: 1);
-    // final Uint8List? buf = await controller.capture(pixelRatio: 1);
-    // Print image
-    // Directory dir = await getApplicationDocumentsDirectory();
-    // String? path = await controller.captureAndSave(dir.path, fileName: "temp.png");
-    // final ByteData data = await rootBundle.load(path!);
-    // final Uint8List buf = data.buffer.asUint8List();
+  // Future<List<int>> testTicket(
+  //     PaperSize paper, CapabilityProfile profile, BuildContext key) async {
+  //   final Generator generator = Generator(paper, profile);
+  //   List<int> bytes = [];
+  //   final Uint8List buf = await controller
+  //       .captureFromWidget(buildTicketKitchen(), context: key, pixelRatio: 1);
+  //   // final Uint8List? buf = await controller.capture(pixelRatio: 1);
+  //   // Print image
+  //   // Directory dir = await getApplicationDocumentsDirectory();
+  //   // String? path = await controller.captureAndSave(dir.path, fileName: "temp.png");
+  //   // final ByteData data = await rootBundle.load(path!);
+  //   // final Uint8List buf = data.buffer.asUint8List();
 
-    final Image image = decodeImage(buf!)!;
+  //   final Image image = decodeImage(buf)!;
 
-    // Print image using alternative commands
-    bytes += generator.image(image);
-    // bytes += generator.imageRaster(image, imageFn: PosImageFn.graphics);
-    // bytes += generator.feed(1);
-    // bytes += generator.cut();
-    return bytes;
-  }
+  //   // Print image using alternative commands
+  //   bytes += generator.image(image);
+  //   // bytes += generator.imageRaster(image, imageFn: PosImageFn.graphics);
+  //   // bytes += generator.feed(1);
+  //   // bytes += generator.cut();
+  //   return bytes;
+  // }
 
-  void _testPrint(PrinterBluetooth printer, BuildContext key) async {
-    printerManager.selectPrinter(printer);
+  // void _testPrint(PrinterBluetooth printer, BuildContext key) async {
+  //   printerManager.selectPrinter(printer);
 
-    // TODO Don't forget to choose printer's paper
-    const PaperSize paper = PaperSize.mm58;
-    final profile = await CapabilityProfile.load();
+  //   // TODO Don't forget to choose printer's paper
+  //   const PaperSize paper = PaperSize.mm58;
+  //   final profile = await CapabilityProfile.load();
 
-    // TEST PRINT
-    try {
-      List<int> print = await testTicket(paper, profile, key);
-      final PosPrintResult res = await printerManager.printTicket(print);
-    } catch (e) {}
-    // DEMO RECEIPT
-    // final PosPrintResult res =
-    //     await printerManager.printTicket((await demoReceipt(paper, profile)));
-
-    // print(res.msg);
-  }
+  //   // TEST PRINT
+  //   try {
+  //     List<int> printTicket = await testTicket(paper, profile, key);
+  //     log("Data: $printTicket");
+  //     // final PosPrintResult res = await printerManager.printTicket(printTicket,
+  //     //     queueSleepTimeMs: 5, chunkSizeBytes: 100);
+  //     // print(res.msg);
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   // DEMO RECEIPT
+  //   // final PosPrintResult res =
+  //   //     await printerManager.printTicket((await demoReceipt(paper, profile)));
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body:
-          // Container()
-          ListView.builder(
-              itemCount: _devices.length,
-              itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: () => _testPrint(_devices[index], context),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 60,
-                        padding: EdgeInsets.only(left: 10),
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.print),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(_devices[index].name ?? ''),
-                                  Text(_devices[index].address!),
-                                  Text(
-                                    'Click to print a test receipt',
-                                    style: TextStyle(color: Colors.grey[700]),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(),
-                      // Screenshot(
-                      //   controller: controller,
-                      //   child: buildTicketKitchen())
-                    ],
-                  ),
-                );
-              }),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: printerManager.isScanningStream,
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data!) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: _stopScanDevices,
-              backgroundColor: Colors.red,
-            );
-          } else {
-            return FloatingActionButton(
-              child: Icon(Icons.search),
-              onPressed: _startScanDevices,
-            );
-          }
-        },
-      ),
-    );
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Container()
+        //     ListView.builder(
+        //         itemCount: _devices.length,
+        //         itemBuilder: (BuildContext context, int index) {
+        //           return InkWell(
+        //             onTap: () => _testPrint(_devices[index], context),
+        //             child: Column(
+        //               children: <Widget>[
+        //                 Container(
+        //                   // height: 60,
+        //                   padding: EdgeInsets.only(left: 10),
+        //                   alignment: Alignment.centerLeft,
+        //                   child: Row(
+        //                     children: <Widget>[
+        //                       Icon(Icons.print),
+        //                       SizedBox(width: 10),
+        //                       Expanded(
+        //                         child: Column(
+        //                           crossAxisAlignment: CrossAxisAlignment.start,
+        //                           mainAxisAlignment: MainAxisAlignment.center,
+        //                           children: <Widget>[
+        //                             Text(_devices[index].name ?? ''),
+        //                             Text(_devices[index].address!),
+        //                             Text("${_devices[index].type}"),
+        //                             Text(
+        //                               'Click to print a test receipt',
+        //                               style: TextStyle(color: Colors.grey[700]),
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       )
+        //                     ],
+        //                   ),
+        //                 ),
+        //                 Divider(),
+        //                 // Screenshot(
+        //                 //   controller: controller,
+        //                 //   child: buildTicketKitchen())
+        //               ],
+        //             ),
+        //           );
+        //         }),
+        // floatingActionButton: StreamBuilder<bool>(
+        //   stream: printerManager.isScanningStream,
+        //   initialData: false,
+        //   builder: (c, snapshot) {
+        //     if (snapshot.data!) {
+        //       return FloatingActionButton(
+        //         child: Icon(Icons.stop),
+        //         onPressed: _stopScanDevices,
+        //         backgroundColor: Colors.red,
+        //       );
+        //     } else {
+        //       return FloatingActionButton(
+        //         child: Icon(Icons.search),
+        //         onPressed: _startScanDevices,
+        //       );
+        //     }
+        //   },
+        // ),
+        );
   }
 }

@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_utils/hive/storage/test-model-json.dart';
+import 'package:flutter_utils/hive/storage/test-respository-json.dart';
 import 'storage/test-model.dart';
 import 'storage/test-object.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,7 +20,10 @@ class HiveScreen extends StatefulWidget {
 class _HiveScreenState extends State<HiveScreen> {
   int _counter = 0;
   TestRepository db = TestRepository();
+  TestRepositoryJson db_json = TestRepositoryJson();
   ValueNotifier<List<TestModel>> listView = ValueNotifier<List<TestModel>>([]);
+  ValueNotifier<List<TestModelJson>> listViewJson =
+      ValueNotifier<List<TestModelJson>>([]);
 
   void init() async {
     Directory dir = await getApplicationDocumentsDirectory();
@@ -28,7 +33,8 @@ class _HiveScreenState extends State<HiveScreen> {
     Hive
       ..init(dir.path)
       ..registerAdapter(TestModelAdapter(), override: true)
-      ..registerAdapter(TestObjectAdapter(), override: true);
+      ..registerAdapter(TestObjectAdapter(), override: true)
+      ..registerAdapter(TestModelJsonAdapter(), override: true);
   }
 
   void showData() async {
@@ -82,6 +88,42 @@ class _HiveScreenState extends State<HiveScreen> {
     box.clear();
   }
 
+  void showDataJson() async {
+    Box box = await db_json.openBox();
+    List<TestModelJson> tickets = db_json.getList(box);
+    listViewJson.value = tickets;
+  }
+
+  void addDataJson() async {
+    Box box = await db_json.openBox();
+    TestModelJson obj = TestModelJson();
+    obj.logID = "$_counter";
+    obj.data = {"id": "test Hive Json", "value": 123123}.toString();
+
+    db_json.add(box, obj);
+  }
+
+  void deleteDataJson() async {
+    Box box = await db_json.openBox();
+    List<TestModelJson> tickets = db_json.getList(box);
+    if (tickets.isEmpty) return;
+    TestModelJson model = tickets.first;
+    db_json.remove(box, model);
+  }
+
+  void updateDataJson() async {
+    Box box = await db_json.openBox();
+    TestModelJson obj = TestModelJson();
+    obj.logID = "0";
+    obj.data = {"id": "123123", "value": "update"}.toString();
+    db_json.add(box, obj);
+  }
+
+  void clearDataJson() async {
+    Box box = await db_json.openBox();
+    box.clear();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -103,41 +145,41 @@ class _HiveScreenState extends State<HiveScreen> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    showData();
+                    showDataJson();
                   },
                   child: Text("Show data")),
               ElevatedButton(
                   onPressed: () {
-                    addData();
+                    addDataJson();
                     _counter++;
                   },
                   child: Text("add data")),
               ElevatedButton(
                   onPressed: () {
-                    deleteData();
+                    deleteDataJson();
                   },
                   child: Text("delete data")),
               ElevatedButton(
                   onPressed: () {
-                    updateData();
+                    updateDataJson();
                   },
                   child: Text("update data")),
               ElevatedButton(
                   onPressed: () {
-                    clearData();
+                    clearDataJson();
                   },
                   child: Text("Clear data")),
             ],
           ),
           Expanded(
               child: ValueListenableBuilder(
-            valueListenable: listView,
-            builder:
-                (BuildContext context, List<TestModel> value, Widget? child) {
+            valueListenable: listViewJson,
+            builder: (BuildContext context, List<TestModelJson> value,
+                Widget? child) {
               return ListView.builder(
-                  itemCount: listView.value.length,
+                  itemCount: listViewJson.value.length,
                   itemBuilder: (BuildContext context, int index) {
-                    TestModel model = listView.value.elementAt(index);
+                    TestModelJson model = listViewJson.value.elementAt(index);
                     return Container(
                         color: index % 2 == 0 ? Colors.grey : Colors.white,
                         child: Text(model.toJson().toString()));
@@ -149,3 +191,5 @@ class _HiveScreenState extends State<HiveScreen> {
     );
   }
 }
+
+// flutter packages pub run build_runner build

@@ -3,9 +3,11 @@ import 'package:flutter_utils/audio/AudioPlayerScreen.dart';
 import 'package:flutter_utils/bluetooth-ble/fuelSensorConfigPage.dart';
 import 'package:flutter_utils/bluetooth-esc-pos/bluetooth-print-esc-pos.dart';
 import 'package:flutter_utils/bluetooth-printer-thermal/bluetooth-print.dart';
+import 'package:flutter_utils/bluetooth-printer-thermal/print-bluetooth-thermal.dart';
 import 'package:flutter_utils/hive/hive_screen.dart';
 import 'package:flutter_utils/main.dart';
 import 'package:flutter_utils/printer-thermal-network/printer-thermail-network.dart';
+import 'package:flutter_utils/socket/screen-socket.dart';
 import 'package:flutter_utils/visitory/visitory_screen.dart';
 import 'package:flutter_utils/websocket/web-socket-screen.dart';
 
@@ -23,7 +25,7 @@ Map<String, WidgetBuilder> routes = {
   '/WebSocket': (context) => const WebSocketScreen(
         title: "Web Socket",
       ),
-  '/BlueTooth Thermal': (context) => const BlueToothPrint(
+  '/BlueTooth Thermal': (context) => const BluetoothThermal(
         title: "BlueTooth Thermal",
       ),
   '/BlueTooth BLE': (context) => FuelSensorConfigPage(),
@@ -32,5 +34,8 @@ Map<String, WidgetBuilder> routes = {
       ),
   '/NetWork ESC POS': (context) => const PrinterThermalNetWorkScreen(
         title: "NetWork ESC POS",
+      ),
+  '/Socket': (context) => const SocketIO(
+        title: "Socket",
       ),
 };
