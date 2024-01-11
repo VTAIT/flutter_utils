@@ -35,41 +35,43 @@ class _PrinterThermalNetWorkScreenState
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Screenshot(controller: controller, child: buildCaptainOrder()),
-            ElevatedButton(
-                onPressed: () async {
-                  final printer = PrinterNetworkManager('192.168.1.253');
-                  PosPrintResult connect = await printer.connect();
-                  if (connect != PosPrintResult.success) {
-                    log("Không kết nối được với máy in");
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Không kết nối được với máy in")));
-                    return;
-                  }
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Screenshot(controller: controller, child: buildCaptainOrder()),
+              ElevatedButton(
+                  onPressed: () async {
+                    final printer = PrinterNetworkManager('192.168.1.75');
+                    PosPrintResult connect = await printer.connect();
+                    if (connect != PosPrintResult.success) {
+                      log("Không kết nối được với máy in");
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Không kết nối được với máy in")));
+                      return;
+                    }
 
-                  Uint8List buf = await controller
-                      .captureFromWidget(buildCaptainOrder(), pixelRatio: 1);
-                  final Image image = decodeImage(buf)!;
-                  final profile = await CapabilityProfile.load();
-                  final generator = Generator(PaperSize.mm80, profile);
+                    Uint8List buf = await controller
+                        .captureFromWidget(buildCaptainOrder(), pixelRatio: 1);
+                    final Image image = decodeImage(buf)!;
+                    final profile = await CapabilityProfile.load();
+                    final generator = Generator(PaperSize.mm80, profile);
 
-                  List<int> bytes = [];
-                  bytes += generator.image(image);
+                    List<int> bytes = [];
+                    bytes += generator.image(image);
 
-                  bytes += generator.feed(1);
-                  bytes += generator.cut();
-                  PosPrintResult printing = await printer.printTicket(bytes);
+                    bytes += generator.feed(1);
+                    bytes += generator.cut();
+                    PosPrintResult printing = await printer.printTicket(bytes);
 
-                  log(printing.msg);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(printing.msg)));
-                  printer.disconnect();
-                },
-                child: Text("Print ticket")),
-          ],
+                    log(printing.msg);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(printing.msg)));
+                    printer.disconnect();
+                  },
+                  child: Text("Print ticket")),
+            ],
+          ),
         ),
       ),
     );

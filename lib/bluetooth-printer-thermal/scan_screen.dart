@@ -4,12 +4,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_utils/bluetooth-printer-thermal/global.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
-import '../utils/string_utils.dart';
-import 'device_screen.dart';
-import '../utils/snackbar.dart';
-import '../widgets/connected_device_tile.dart';
-import '../widgets/scan_result_tile.dart';
+import '../bluetooth-ble/utils/string_utils.dart';
+import '../bluetooth-ble/screens/device_screen.dart';
+import '../bluetooth-ble/utils/snackbar.dart';
+import '../bluetooth-ble/widgets/connected_device_tile.dart';
+import '../bluetooth-ble/widgets/scan_result_tile.dart';
 // import '../utils/extra.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -60,11 +62,9 @@ class _ScanScreenState extends State<ScanScreen> {
 
   Future onScanPressed() async {
     try {
-      // android is slow when asking for all advertisments,
-      // so instead we only ask for 1/8 of them
       int divisor = Platform.isAndroid ? 8 : 1;
       await FlutterBluePlus.startScan(
-          timeout: const Duration(seconds: 15),
+          timeout: const Duration(seconds: 5),
           continuousUpdates: true,
           continuousDivisor: divisor);
     } catch (e) {
@@ -83,17 +83,19 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
+  // Chọn máy in
   void onConnectPressed(BluetoothDevice device) {
-    // device.connectAndUpdateStream().catchError((e) {
-    //   Snackbar.show(ABC.c, prettyException("Connect Error:", e),
-    //       success: false);
-    // });
-    // MaterialPageRoute route = MaterialPageRoute(
-    //     builder: (context) => DeviceScreen(device: device),
-    //     settings: RouteSettings(name: '/DeviceScreen'));
-    // Navigator.of(context).push(route);
-    // widget.updateItem?.call(device);
-    Navigator.of(context).pop();
+    PrintBluetoothThermal.connect(macPrinterAddress: device.remoteId.toString())
+        .then((result) {
+      if (result) {
+        printer = device;
+        Navigator.of(context).pop();
+        return Future.delayed(Duration(milliseconds: 500));
+      }
+      Snackbar.show(
+          ABC.b, prettyException("Connect Error:", "Không kết nối được máy in"),
+          success: false);
+    });
   }
 
   Future onRefresh() {
@@ -136,27 +138,83 @@ class _ScanScreenState extends State<ScanScreen> {
 
   List<Widget> _buildScanResultTiles(BuildContext context) {
     List<Widget> results = [];
+    String printerId = printer?.remoteId.toString() ?? "";
+    if (printerId.isNotEmpty) {
+      results.add(ListTile(
+        leading: Icon(
+          Icons.bluetooth,
+          color: Colors.lightBlue,
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              printer!.platformName,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              printerId,
+              style: Theme.of(context).textTheme.bodySmall,
+            )
+          ],
+        ),
+        trailing: ElevatedButton(
+            child: const Text('Disconnect'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              final bool status = await PrintBluetoothThermal.disconnect;
+              if (status) {
+                printer = null;
+                setState(() {
+                  _buildScanResultTiles(context);
+                });
+              }
+            }),
+      ));
+    }
 
     for (ScanResult r in _scanResults) {
       String name = nvl(r.device.platformName.toUpperCase());
-      // print("_handleResult: ${name}");
-
+      String id = r.device.remoteId.toString();
       if (name.isNotEmpty) {
-        log('${r.device.platformName} found! rssi: ${r.rssi} id: ${r.device.remoteId}');
-        results.add(ScanResultTile(
-          result: r,
-          onTap: () => onConnectPressed(r.device),
+        // log('${r.device.platformName} found! rssi: ${r.rssi} id: ${r.device.remoteId}');
+        results.add(ListTile(
+          leading: Icon(
+            Icons.bluetooth,
+            color: Colors.grey,
+          ),
+          title: name.isNotEmpty
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      name,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      id,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )
+                  ],
+                )
+              : Text(id),
+          trailing: ElevatedButton(
+              child: const Text('CONNECT'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                onConnectPressed(r.device);
+              }),
         ));
       }
     }
-    // return _scanResults
-    // .map(
-    //   (r) => ScanResultTile(
-    //     result: r,
-    //     onTap: () => onConnectPressed(r.device),
-    //   ),
-    // )
-    // .toList();
 
     return results;
   }
@@ -184,7 +242,6 @@ class _ScanScreenState extends State<ScanScreen> {
           onRefresh: onRefresh,
           child: ListView(
             children: <Widget>[
-              ..._buildConnectedDeviceTiles(context),
               ..._buildScanResultTiles(context),
             ],
           ),

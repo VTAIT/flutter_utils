@@ -19,7 +19,7 @@ Widget buildCaptainOrder(
 
   List<Widget> widgetList = [];
 
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 10; i++) {
     widgetList.add(
       Column(
         mainAxisSize: MainAxisSize.min,
@@ -28,7 +28,7 @@ Widget buildCaptainOrder(
           Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(
-              "Name: 00000000000",
+              "$i Name: 00000000000",
               style: TextStyle(
                 fontSize: fontSizeTitle,
                 color: Colors.black,

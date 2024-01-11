@@ -3,8 +3,15 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
+  charset_converter
+  file_selector_windows
+  firebase_core
   flutter_secure_storage_windows
+  maxx_sunmi_printer
   permission_handler_windows
+  share_plus
+  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

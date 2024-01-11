@@ -78,6 +78,8 @@ class _BluetoothThermalState extends State<BluetoothThermal> {
       _msjprogress = "Wait";
       items = [];
     });
+    // final List<BluetoothInfo> listResult =
+    //     await PrintBluetoothThermal.pairedBluetooths;
     final List<BluetoothInfo> listResult =
         await PrintBluetoothThermal.pairedBluetooths;
 
